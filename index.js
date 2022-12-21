@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
 
+const app = express();
 dotenv.config();
 
 import productsRouter from "./routes/products.js";
@@ -12,8 +13,6 @@ import userRouter from "./routes/user.js";
 import cartRouter from "./routes/cart.js";
 import ordersRouter from "./routes/order.js";
 import stripeRouter from "./routes/stripe.js";
-
-const app = express();
 
 app.use(bodyParser.json({ limit: "30mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
@@ -31,9 +30,10 @@ app.get("/", (req, res) => {
 });
 
 const PORT = process.env.PORT || 5000;
-
+const KEY = process.env.CONNECTION_URL;
+console.log(KEY);
 mongoose
-  .connect(process.env.CONNECTION_URL, {
+  .connect(KEY, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
