@@ -31,7 +31,6 @@ app.get("/", (req, res) => {
 
 const PORT = process.env.PORT || 5000;
 const KEY = process.env.CONNECTION_URL;
-console.log(KEY);
 mongoose
   .connect(KEY, {
     useNewUrlParser: true,
