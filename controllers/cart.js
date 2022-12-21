@@ -1,78 +1,70 @@
-import AllCart from "../models/postCart.js";
+import Cart from "../models/Cart.js";
 import mongoose from "mongoose";
+import {
+  verifyToken,
+  verifyTokenAndAdmin,
+  verifyTokenAndAuthorization,
+} from "./verifyToken.js";
 
-export const getCart = async (req, res) => {
+export const addCart =
+  (verifyToken,
+  async (req, res) => {
+    const newCart = new Cart(req.body);
+
     try {
-        const items = await AllCart.find();
-        res.status(200).json(items);
-    } catch (error) {
-        res.status(404).json({ message: error.message });
+      const savedCart = await newCart.save();
+      res.status(200).json(savedCart);
+    } catch (err) {
+      res.status(500).json(err);
     }
-}
+  });
 
-export const addCart = async (req, res) => {
-    const post = req.body;
-    const newPost = new AllCart(post);
+export const updateCart =
+  (verifyTokenAndAuthorization,
+  async (req, res) => {
     try {
-        await newPost.save();
-
-        res.status(201).json(newPost);
-        console.log("Post Route Reached")
-    } catch (error) {
-        res.status(409).json({ message: error.message });
+      const updatedCart = await Cart.findByIdAndUpdate(
+        req.params.id,
+        {
+          $set: req.body,
+        },
+        { new: true }
+      );
+      res.status(200).json(updatedCart);
+    } catch (err) {
+      res.status(500).json(err);
     }
-}
+  });
 
-export const delCart = async (req, res) => {
-    const { id: _id } = req.params;
-
-    if (!mongoose.Types.ObjectId.isValid(_id))
-        return res.status(404).send("No post with that id");
-
-    await AllCart.findByIdAndRemove(_id);
-    res.json({ message: "cart item deleted successfully" });
-}
-
-export const incQty = async (req, res) => {
-    const { id: _id } = req.params;
-    if (!mongoose.Types.ObjectId.isValid(_id))
-      return res.status(404).send("No cart with that id");
-  
-    const cart = await AllCart.findById(_id);
-    const updatedCart = await AllCart.findByIdAndUpdate(
-      _id,
-      {
-        quantity: cart.quantity + 1,
-      },
-      { new: true }
-    );
-    res.json(updatedCart);
-};
-
-export const decQty = async (req, res) => {
-    const { id: _id } = req.params;
-    if (!mongoose.Types.ObjectId.isValid(_id))
-        return res.status(404).send("No cart with that id");
-  
-    const cart = await AllCart.findById(_id);
-    if (cart.quantity > 1) {
-        const updatedCart = await AllCart.findByIdAndUpdate(
-            _id,
-            {
-            quantity: cart.quantity - 1,
-            },
-            { new: true }
-        );
-        res.json(updatedCart);
-    } else {
-        const cartqty = await AllCart.findByIdAndUpdate(
-            _id,
-            {
-            quantity: cart.quantity,
-            },
-            { new: true }
-        );
-        res.json(cartqty);
+export const deleteCart =
+  (verifyTokenAndAuthorization,
+  async (req, res) => {
+    try {
+      await Cart.findByIdAndDelete(req.params.id);
+      res.status(200).json("Cart has been deleted...");
+    } catch (err) {
+      res.status(500).json(err);
     }
-    
-};
+  });
+
+export const getUserCart =
+  (verifyTokenAndAuthorization,
+  async (req, res) => {
+    try {
+      const cart = await Cart.findOne({ userId: req.params.id });
+      res.status(200).json(cart);
+    } catch (err) {
+      res.status(500).json(err);
+    }
+  });
+
+export const getAllUserCart =
+  (verifyTokenAndAdmin,
+  async (req, res) => {
+    try {
+      const carts = await Cart.find();
+      res.status(200).json(carts);
+    } catch (err) {
+      res.status(500).json(err);
+    }
+  });

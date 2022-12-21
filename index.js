@@ -5,6 +5,11 @@ import cors from "cors";
 import dotenv from "dotenv";
 
 import productsRouter from "./routes/products.js";
+import authRouter from "./routes/auth.js";
+import userRouter from "./routes/user.js";
+import cartRouter from "./routes/cart.js";
+import ordersRouter from "./routes/order.js";
+import stripeRouter from "./routes/stripe.js";
 
 const app = express();
 dotenv.config();
@@ -13,10 +18,15 @@ app.use(bodyParser.json({ limit: "30mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 app.use(cors());
 
-app.use("/products", productsRouter);
+app.use("/api/products", productsRouter);
+app.use("/api/auth", authRouter);
+app.use("/api/user", userRouter);
+app.use("/api/cart", cartRouter);
+app.use("/api/orders", ordersRouter);
+app.use("/api/checkout", stripeRouter);
 
 app.get("/", (req, res) => {
-    res.send("Welcome to emmanuel's ecommerce app api");
+  res.send("Welcome to emmanuel's sneakersVille app api");
 });
 
 const PORT = process.env.PORT || 5000;
