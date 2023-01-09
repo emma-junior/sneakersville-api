@@ -13,6 +13,7 @@ import userRouter from "./routes/user.js";
 import cartRouter from "./routes/cart.js";
 import ordersRouter from "./routes/order.js";
 import stripeRouter from "./routes/stripe.js";
+import paystackRouter from "./routes/paystack.js";
 
 app.use(bodyParser.json({ limit: "30mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
@@ -31,6 +32,7 @@ app.use("/api/user", userRouter);
 app.use("/api/cart", cartRouter);
 app.use("/api/orders", ordersRouter);
 app.use("/api/checkout", stripeRouter);
+app.use("/api/payment", paystackRouter);
 
 app.get("/", (req, res) => {
   res.send("Welcome to emmanuel's sneakersVille app api");
